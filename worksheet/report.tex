@@ -1,0 +1,168 @@
+\documentclass[a4paper,11pt]{article}
+\include{preamble}
+
+\begin{document}
+\author{AUTHOR}
+\title{Computational MRI (COMP0121) Coursework 1}
+\date{\today}
+\maketitle
+
+\section{Spin excess}
+\subsection{}
+When a group of particle is placed in a magnetic field, the spin of each particle aligns parallel or anti-parallel to the external field.
+The Spin excess is given by Boltzmann distribution
+\begin{equation}
+    \frac{N^-}{N^+} = e^{-E/kT}
+    \label{equation:Boltzmann}
+\end{equation}
+where $N^+$ and $N^-$ are the number of spins in lower energy alignment and higher energy alignment, respectively. 
+$E$ is the energy difference between the two spin energy levels, $k$, the Boltzmann constant, and T, the the absolute temperature.
+The split of spin energy level under external magnetic field is determined by Larmor frequency $\omega$.
+\begin{equation}
+    E = h \nu
+    \label{equation:photon_energy}
+\end{equation}
+where $h$ is the Planck constant, and $\omega$ is given by
+\begin{equation}
+    \omega = \gamma B
+    \label{equation:Larmor}
+\end{equation}
+where $\gamma$ is the gyromagnetic ratio, and B, the magnetic field strength.
+Combining Eq.\ref{equation:Boltzmann} to \ref{equation:Larmor} yields
+\begin{equation}
+    \frac{N^-}{N^+} = e^{-h\gamma B/kT}
+\end{equation}
+
+\subsection{}
+Code for the computation of spin excess can be found in spin\_excess.m file. 
+
+\section{Forced precession with an on-resonance RF field}
+\subsection{}
+The translation matrix for rotating a 3-D vector about the $z$-axis by some angle $\theta$ is
+\begin{equation}
+    R_z(\theta) = 
+    \begin{bmatrix}
+        \cos \theta & -\sin \theta  & 0 \\
+        \sin \theta & \cos \theta & 0 \\
+        0 & 0 & 1 \\
+    \end{bmatrix}
+\end{equation}
+
+\subsection{}
+Similarly,
+\begin{equation}
+    R_x(\theta) = 
+    \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & \cos \theta & -\sin \theta \\
+        0 & \sin \theta & \cos \theta \\
+    \end{bmatrix}
+\end{equation}
+
+\subsection{}
+and
+\begin{equation}
+    R_y(\theta) = 
+    \begin{bmatrix}
+        \cos \theta & 0 & \sin \theta \\
+        0 & 1 & 0 \\
+        -\sin \theta & 0 & \cos \theta \\
+    \end{bmatrix}
+\end{equation}
+
+\subsection{}
+A video visualising the forced precession of magnetization $\overrightarrow{M}=\left[0\ 0\ 1\right]'$ in rotating frame is shown in the file video2.4.avi.
+A figure of that can be found in Fig. \ref{fig:figure2.4}.
+Find the code producing these in Problem2.m.
+Note that video and script files are numbered after the corresponding problem number. 
+
+\section{Free precession in the main static magnetic field}
+\subsection{}
+A video for the forced precession in laboratory frame can be find in video3.1.avi.
+A figure of that can be found in Fig. \ref{fig:figure3.1}.
+
+\subsection{}
+The free precession with the effect of $T_1$ and $T_2$ relaxation is governed by the Bloch equation,
+
+\begin{equation}
+    \diff{\overrightarrow{M}}{t} = \gamma \overrightarrow{M} \times \overrightarrow{B}  - \frac{\overrightarrow{M}_\perp }{T_2} + \frac{(M_0-M_z)\hat{z}}{T_1}
+    \label{equation:Bloch}
+\end{equation}
+
+This ordinary differential equation can be solve by Euler method directly.
+To make use of the rotation matrix developed in the last problem, the first term of Eq. \ref{equation:Boltzmann} which merely results in rotation of $\overrightarrow{M}$ around $\overrightarrow{B}$ is solved analytically.
+This ensures that the choice of step size in Euler method will not otherwise affect the precision of the rotation.
+The reduced Bloch equation (in the on-resonance Rotating frame)
+\begin{equation}
+    \diff{\overrightarrow{M}^*}{t} = - \frac{\overrightarrow{M}_\perp^* }{T_2} + \frac{(M_0-M^*_z)\hat{z}}{T_1}
+    \label{equation:reduced Bloch}
+\end{equation}
+is solved instead, which governs only relaxation process, where $\overrightarrow{M}^*$ is magnetization in the on-resonance Rotating frame.
+The Euler's method is the following iteration,
+\begin{equation}
+    \overrightarrow{M}^*_{k+1}= \overrightarrow{M}^*_k + \Delta t \left(-\frac{\overrightarrow{M}_{\perp,k}^*}{T_2} + \frac{(M_0-M^*_{z,k})\hat{z}}{T_1}\right)
+\end{equation}
+The magnetization in the laboratory frame can be calculated by translation, in this case, rotation around $z$ axis.
+\begin{equation}
+    \overrightarrow{M}_{k} = R_z(\theta_k)\overrightarrow{M}^*_{k}
+\end{equation}
+where $\theta_k$ is the rotation angle with respect to the initial orientation of magnetization at step $k$. 
+The parameters used in this report are (the same everywhere unless explicit specified): $T_1$ = 10 ms, $T_2$ = 5 ms, and $\omega_0$ = 4$\pi$ KHz. The results are in video3.2.avi and Fig. \ref{fig:figure3.2}.
+
+\subsection{}
+
+This is to solve Eq. \ref{equation:reduced Bloch}. Find the results in in video3.3.avi and Fig. \ref{fig:figure3.3}.
+
+\subsection{}
+Find the results in in video3.4.avi and Fig. \ref{fig:figure3.4}.
+
+\subsection{}
+Find the results in in video3.5.avi and Fig. \ref{fig:figure3.5}.
+
+\section{Free induction decay and inversion recovery}
+\subsection{}
+The voltage signal collected by a coil placed near the sample is given by 
+\begin{equation}
+    emf = -\diff{}{t}\int_{sample} d^3r\overrightarrow{M}(\overrightarrow{r},t)\cdot\overrightarrow{B}^{receive}(\overrightarrow{r})
+\end{equation}
+In the calculation, assume the sample to be small enough and a coil placed on the $x$-axis.
+Find the results in Fig. \ref{fig:figure4.1}. RF pulses are applied every 25 ms. 
+
+\subsection{}
+The results for different Inversion Time are shown in Fig. \ref{fig:figure4.2.1}.
+The $M_\perp(T_I)$ vs $T_I$ is shown in Fig. \ref{fig:figure4.2.T1est}.
+
+\section{Spin echo}
+\subsection{}
+A uniform distribution is not a good assumption for the isochromats frequencies at equilibrium.
+For presentation purpose, the relaxation are slowed down by using $T_1$ = 20 ms and $T_2$ = 15 ms only in Problem 5.
+The span of the frequencies are 0.05 ($\delta_\omega/\omega_0$).
+The echo time $T_E$ = 15 ms.
+The result is shown in Fig. \ref{fig:figure5.1}.
+\subsection{}
+Rejection method was used to generate random numbers following Lorentzian distribution. Same span was used, and $\Delta$ = 0.1 for the Lorentzian distribution. 
+Find the result in Fig. \ref{fig:figure5.2}.
+\subsection{}
+Figure \ref{fig:figure5.1} shows considerable side packet in the free precession.
+This is not the natural case when the material is approaching equilibrium under external magnetic field.
+Figure \ref{fig:figure5.2} shows the correct response with a good estimation of isochromats frequencies.
+\subsection{}
+Find the result in Fig. \ref{fig:figure5.4}.
+\pagebreak
+
+\image{figure2.4}{pdf}{Forced precession in the rotating frame.}
+\image{figure3.1}{pdf}{Forced precession in the laboratory frame.}
+\image{figure3.2}{pdf}{Free precession with relaxation in the laboratory frame.}
+\image{figure3.3}{pdf}{Free precession with relaxation in the laboratory frame.}
+\image{figure3.4}{pdf}{Free precession with relaxation in the laboratory frame, ahead of resonance frequency.}
+\image{figure3.5}{pdf}{Free precession with relaxation in the laboratory frame, behind resonance frequency.}
+\image{figure4.1}{pdf}{Free induction decay sequece.}
+\image{figure4.2.1}{pdf}{IR signal. $T_I = 0.5 T_1\ln2$}
+\image{figure4.2.2}{pdf}{IR signal. $T_I = T_1\ln2$}
+\image{figure4.2.3}{pdf}{IR signal. $T_I = 1.5 T_1\ln2$}
+\image{figure4.2.T1est}{pdf}{$M_\perp(T_I)$ vs $T_I$ for $T_1$ estimation}
+\image{figure5.1}{pdf}{Spin echo, assuming unifor distribution.}
+\image{figure5.2}{pdf}{Spin echo, assuming unifor distribution.}
+\image{figure5.4}{pdf}{Hahn spin echo, assuming unifor distribution.}
+
+\end{document}

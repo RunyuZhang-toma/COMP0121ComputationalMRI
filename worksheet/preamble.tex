@@ -1,0 +1,31 @@
+
+\usepackage[margin=1in]{geometry} %choose a margin
+\usepackage{graphicx} %insert pictures
+\pdfoptionpdfminorversion=7 %stops graphicsx complaining
+\usepackage{siunitx} %typeset SI units
+\usepackage{units} %nicefrac
+\usepackage{float} %puts pictures where I said
+\floatplacement{figure}{H} % to place figure at the end
+\usepackage{mathtools} %extra Maths commands
+\usepackage{amssymb} %extra symbols
+\usepackage{amsmath} %extra Maths commands
+%\usepackage[compact]{titlesec} %reduces whitespace around section headings
+\numberwithin{equation}{section} %numbers equations by sections, part of amsmath
+% \numberwithin{figure}{section} %numbers figures by sections, part of amsmath
+\usepackage{textcomp,gensymb} %extra symbols, textcomp removes warnings about \perthousand and \micro
+\usepackage{bm} %bold in mathmode (text style bolding)
+\usepackage{parskip} %no indents on new paragraphs
+\setlength\parskip{\baselineskip} %tidies paragraphs
+\usepackage{caption} %2 pics next to each other
+\usepackage{subcaption}  %2 pics next to each other
+\usepackage{color} %used in listings
+\usepackage{listings} %formats code nicely
+
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}
+
+\newcommand{\image}[4][10]{\begin{figure}[ht]
+\centering
+\includegraphics[width=#1cm]{./figures/#2.#3}
+\caption{#4}
+\label{fig:#2}
+\end{figure}}
